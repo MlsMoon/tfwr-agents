@@ -1,0 +1,13 @@
+# Copy these into the game options.txt if you want the same editor behavior.
+# Do not overwrite your resolution / keybinds unless you mean to.
+
+file watcher = enabled
+autosave progress = enabled
+tabs to spaces = disabled
+allow locked features = disabled
+print warnings = enabled
+start execution = F5
+stop execution = Shift F5
+search = Ctrl F
+indent selection = Tab
+unindent selection = Shift Tab

@@ -1,0 +1,33 @@
+# Game save data — never publish progress or backups
+/Saves/
+/Backup/
+/Player.log
+/Player-prev.log
+/output.txt
+/steam_autocloud.vdf
+/Title.json
+/options.txt
+
+# Agent discovery symlinks (recreated by setup.bat)
+/.claude/
+/.grok/
+/.cursor/
+/CLAUDE.md
+/GROK.md
+
+# Runtime / personal snapshots
+/.agents/error-iter/
+/.agents/skills/tfwr-save/references/save-snapshot.md
+
+# Build outputs (source stays)
+**/bin/
+**/obj/
+**/.vs/
+*.user
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
