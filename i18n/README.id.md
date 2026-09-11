@@ -4,7 +4,7 @@ Ruang kerja Agent untuk **The Farmer Was Replaced**.
 
 Satu pohon skill kanonik, pemasang sekali jalan, dan templat skrip. Data save tidak masuk repositori.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Satu pohon skill kanonik, pemasang sekali jalan, dan templat skrip. Data save ti
 - `AGENTS.md` — aturan Cursor / Claude / Grok saat folder ini jadi workspace
 - `.agents/skills/` — **satu-satunya salinan skill**. Editor melihatnya lewat symlink dari setup
 - `templates/Save0/` — skrip drone (`main`, matahari, labu, kaktus, dinosaurus, labirin, …)
-- `setup.bat` / `setup.ps1` — menyalin skill + skrip ke folder game dan membuat tautan
+- `setup.bat` / `setup.ps1` — dulu bahasa, lalu jalur save; salin repo dan selesai init sendiri
+- `i18n/` — README terjemahan dan teks setup. Akar repo tetap bahasa Inggris
 
 ## Tidak termasuk
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` **akan minta jalur save**, **menyalin repo ke sana, lalu menyelesaikan init sendiri**. Tidak perlu perintah kedua.
+`setup.bat` akan minta **bahasa** dulu (`en`, `zh-CN`, `id`, …), lalu jalur save, **menyalin repo ke sana, lalu menyelesaikan init sendiri**. Tidak perlu perintah kedua.
 
 Jalur bawaan (Enter):
 

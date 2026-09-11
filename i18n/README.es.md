@@ -4,7 +4,7 @@ Espacio de trabajo de Agent para **The Farmer Was Replaced**.
 
 Un solo árbol canónico de skills, instalador de un paso y plantillas de scripts. La partida no entra en el repositorio.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Un solo árbol canónico de skills, instalador de un paso y plantillas de script
 - `AGENTS.md` — reglas para Cursor / Claude / Grok cuando esta carpeta es el workspace
 - `.agents/skills/` — **la única copia de skills**. Los editores las ven por los enlaces de setup
 - `templates/Save0/` — scripts del dron (`main`, girasol, calabaza, cactus, dinosaurio, laberinto, …)
-- `setup.bat` / `setup.ps1` — copia skills y scripts a la carpeta del juego y crea los enlaces
+- `setup.bat` / `setup.ps1` — primero el idioma, luego la ruta de guardado; copia el repo y termina la init
+- `i18n/` — README traducidos y textos de instalación. La raíz del repo sigue en inglés
 
 ## Qué no incluye
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` **pide la ruta de guardado**, **copia este repo ahí y termina la init solo**. No hace falta un segundo comando.
+`setup.bat` pide primero el **idioma** (`en`, `zh-CN`, `es`, …), luego la ruta de guardado, **copia este repo ahí y termina la init solo**. No hace falta un segundo comando.
 
 Ruta por defecto (Enter):
 

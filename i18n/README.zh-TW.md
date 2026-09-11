@@ -4,7 +4,7 @@
 
 只維護一份權威 skill、一鍵安裝，以及農場腳本範本。你的存檔不會進倉庫。
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@
 - `AGENTS.md` — 把遊戲使用者目錄當成工作區時，Cursor / Claude / Grok 要遵守的規則
 - `.agents/skills/` — **唯一的 skill 真源**。Claude / Cursor / Grok 透過安裝腳本建立的符號連結來發現它
 - `templates/Save0/` — 無人機腳本（`main`、向日葵、南瓜、仙人掌、恐龍、迷宮等）
-- `setup.bat` / `setup.ps1` — 把 skill 與腳本拷進遊戲目錄，並建立連結
+- `setup.bat` / `setup.ps1` — 先選語言，再問存檔路徑，拷進該目錄並自動做完初始化
+- `i18n/` — 多語言 README 與安裝提示。倉庫根目錄只保留英文
 
 ## 倉庫裡沒有什麼
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-執行 `setup.bat` 後會**請你輸入存檔路徑**，然後**自動把自己拷進該目錄並做完初始化**。不用再跑第二步。
+執行 `setup.bat` 後會**先請你輸入語言**（`en`、`zh-CN`、`zh-TW` 等），再問存檔路徑，然後**自動把自己拷進該目錄並做完初始化**。不用再跑第二步。
 
 預設路徑（直接 Enter）：
 

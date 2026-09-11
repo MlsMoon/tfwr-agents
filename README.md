@@ -5,24 +5,25 @@ Agent workspace for **The Farmer Was Replaced** (编程农场).
 One canonical skill tree, a one-shot installer, and farm script templates. Your save data stays on your machine.
 
 **[English](README.md)** ·
-**[简体中文](README.zh-CN.md)** ·
-**[繁體中文](README.zh-TW.md)** ·
-**[日本語](README.ja.md)** ·
-**[한국어](README.ko.md)** ·
-**[Deutsch](README.de.md)** ·
-**[Français](README.fr.md)** ·
-**[Español](README.es.md)** ·
-**[Português](README.pt-BR.md)** ·
-**[Русский](README.ru.md)** ·
-**[Tiếng Việt](README.vi.md)** ·
-**[Bahasa Indonesia](README.id.md)**
+**[简体中文](i18n/README.zh-CN.md)** ·
+**[繁體中文](i18n/README.zh-TW.md)** ·
+**[日本語](i18n/README.ja.md)** ·
+**[한국어](i18n/README.ko.md)** ·
+**[Deutsch](i18n/README.de.md)** ·
+**[Français](i18n/README.fr.md)** ·
+**[Español](i18n/README.es.md)** ·
+**[Português](i18n/README.pt-BR.md)** ·
+**[Русский](i18n/README.ru.md)** ·
+**[Tiếng Việt](i18n/README.vi.md)** ·
+**[Bahasa Indonesia](i18n/README.id.md)**
 
 ## What you get
 
 - `AGENTS.md` — rules for Cursor / Claude / Grok when this folder is the workspace
 - `.agents/skills/` — **the only skill copy**. Claude / Cursor / Grok see it through symlinks created by setup
 - `templates/Save0/` — drone scripts (`main`, sunflower, pumpkin, cactus, dinosaur, maze, …)
-- `setup.bat` / `setup.ps1` — ask for the save path, copy this repo there, then finish init (skills + farm scripts + links)
+- `setup.bat` / `setup.ps1` — first ask for a language, then the save path; copy this repo there and finish init
+- `i18n/` — translated READMEs and setup prompt files. The repo root stays English.
 
 ## What is not in this repo
 
@@ -53,13 +54,13 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` will **ask you to type the save path**, then **copy this repo into that folder and finish init by itself** (skills, farm scripts, Claude / Cursor / Grok links). No second command.
+`setup.bat` first asks for a **language** (`en`, `zh-CN`, `ja`, …). Then it asks for the save path and **copies this repo in and finishes init by itself** (skills, farm scripts, Claude / Cursor / Grok links). No second command.
 
-Default path (press Enter):
+Default language is English (press Enter). Default path (press Enter again):
 
 `%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
 
-Hints shown in the bat:
+Hints after you pick a language:
 
 - This is the **save** folder, not `steamapps\common\The Farmer Was Replaced`
 - Launch the game once if that folder does not exist yet
@@ -68,7 +69,7 @@ Hints shown in the bat:
 Non-interactive:
 
 ```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "C:\Users\YOU\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -Lang en -GameRoot "C:\Users\YOU\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
 ```
 
 After it succeeds, open **that save folder** in Cursor. The script:

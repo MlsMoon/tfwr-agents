@@ -2,6 +2,7 @@
 [CmdletBinding()]
 param(
     [string]$GameRoot,
+    [string]$Lang,
     [switch]$SkipFarmScripts,
     [switch]$ExportFarm,
     [switch]$NonInteractive
@@ -15,6 +16,7 @@ if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
     $RepoRoot = (Get-Location).Path
 }
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
+$I18nDir = Join-Path $RepoRoot 'i18n'
 
 function Normalize-PathInput {
     param([string]$Value)
@@ -28,6 +30,88 @@ function Normalize-PathInput {
     return $text
 }
 
+function Read-JsonFile {
+    param([Parameter(Mandatory)][string]$Path)
+    return (Get-Content -LiteralPath $Path -Raw -Encoding UTF8 | ConvertFrom-Json)
+}
+
+function Resolve-Lang {
+    param([string]$Value)
+    $raw = if ($null -eq $Value) { '' } else { $Value.Trim() }
+    if ([string]::IsNullOrWhiteSpace($raw)) {
+        return 'en'
+    }
+    $catalogPath = Join-Path $I18nDir 'languages.json'
+    if (Test-Path -LiteralPath $catalogPath) {
+        $catalog = Read-JsonFile $catalogPath
+        foreach ($entry in $catalog.languages) {
+            if ($entry.id -eq $raw) {
+                return $entry.id
+            }
+            foreach ($alias in $entry.aliases) {
+                if ([string]::Equals($alias, $raw, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    return $entry.id
+                }
+            }
+        }
+    }
+    $direct = Join-Path $I18nDir ("setup.$raw.json")
+    if (Test-Path -LiteralPath $direct) {
+        return $raw
+    }
+    return ''
+}
+
+function Import-Messages {
+    param([string]$LangId)
+    $enPath = Join-Path $I18nDir 'setup.en.json'
+    if (!(Test-Path -LiteralPath $enPath)) {
+        throw "Missing English setup strings: $enPath"
+    }
+    $script:MsgEn = Read-JsonFile $enPath
+    $script:Msg = $script:MsgEn
+    if ([string]::IsNullOrWhiteSpace($LangId) -or $LangId -eq 'en') {
+        return
+    }
+    $path = Join-Path $I18nDir ("setup.$LangId.json")
+    if (Test-Path -LiteralPath $path) {
+        $script:Msg = Read-JsonFile $path
+    }
+}
+
+function Get-MessageText {
+    param(
+        $Bag,
+        [string]$Key
+    )
+    if ($null -eq $Bag) {
+        return $null
+    }
+    $prop = $Bag.PSObject.Properties[$Key]
+    if ($null -eq $prop) {
+        return $null
+    }
+    return [string]$prop.Value
+}
+
+function T {
+    param(
+        [Parameter(Mandatory)][string]$Key,
+        [object[]]$FormatArgs
+    )
+    $text = Get-MessageText -Bag $script:Msg -Key $Key
+    if ([string]::IsNullOrEmpty($text)) {
+        $text = Get-MessageText -Bag $script:MsgEn -Key $Key
+    }
+    if ([string]::IsNullOrEmpty($text)) {
+        $text = $Key
+    }
+    if ($FormatArgs -and $FormatArgs.Count -gt 0) {
+        return [string]::Format($text, $FormatArgs)
+    }
+    return $text
+}
+
 function Read-SavePath {
     $default = Join-Path $env:USERPROFILE 'AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced'
     if (-not [string]::IsNullOrWhiteSpace($GameRoot)) {
@@ -37,13 +121,18 @@ function Read-SavePath {
         return $default
     }
     Write-Host ''
-    Write-Host 'Enter the game SAVE folder, not the Steam install folder.'
+    Write-Host (T 'enter_save')
     Write-Host ''
-    Write-Host 'Default (press Enter):'
+    Write-Host (T 'default_label')
     Write-Host "  $default"
     Write-Host ''
-    Write-Host 'Hint: launch the game once so this folder exists. Do not use steamapps\common\...'
-    $typed = Read-Host 'Save path'
+    Write-Host (T 'hints_title')
+    Write-Host ("  - " + (T 'hint_launch'))
+    Write-Host ("  - " + (T 'hint_steam'))
+    Write-Host ("  - " + (T 'hint_paste'))
+    Write-Host ("  - " + (T 'hint_auto'))
+    Write-Host ''
+    $typed = Read-Host (T 'save_path_prompt')
     $typed = Normalize-PathInput $typed
     if ([string]::IsNullOrWhiteSpace($typed)) {
         return $default
@@ -53,11 +142,12 @@ function Read-SavePath {
 
 function Assert-SaveFolder {
     param([Parameter(Mandatory)][string]$Path)
+    $expected = Join-Path $env:USERPROFILE 'AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced'
     if ($Path -match 'steamapps\\common') {
-        throw "This is the Steam install folder, not the save folder.`nExpected something like: $env:USERPROFILE\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+        throw (T 'steam_error' @($expected))
     }
     if (!(Test-Path -LiteralPath $Path -PathType Container)) {
-        throw "Folder not found: $Path`nLaunch the game once so the save folder exists, or check the path."
+        throw (T 'missing_folder' @($Path))
     }
     return (Resolve-Path -LiteralPath $Path).Path
 }
@@ -128,11 +218,13 @@ function Copy-WorkspaceIntoSave {
         New-Item -ItemType Directory -Path $agentsDst | Out-Null
     }
     Copy-Tree -From $skillsSrc -To (Join-Path $To '.agents\skills')
-    $templatesSrc = Join-Path $From 'templates'
-    if (Test-Path -LiteralPath $templatesSrc) {
-        Copy-Tree -From $templatesSrc -To (Join-Path $To 'templates')
+    foreach ($folder in @('templates', 'i18n')) {
+        $src = Join-Path $From $folder
+        if (Test-Path -LiteralPath $src) {
+            Copy-Tree -From $src -To (Join-Path $To $folder)
+        }
     }
-    Write-Host '[ok] Copied workspace into the save folder. save.json was not touched.'
+    Write-Host (T 'copied_ok')
 }
 
 function Install-AgentLinks {
@@ -147,58 +239,82 @@ function Install-AgentLinks {
     }
 }
 
-$templateDir = Join-Path $RepoRoot 'templates\Save0'
-
-if ($ExportFarm) {
-    $exportRoot = if ([string]::IsNullOrWhiteSpace($GameRoot)) { $RepoRoot } else { (Assert-SaveFolder (Normalize-PathInput $GameRoot)) }
-    $saveDir = Join-Path $exportRoot 'Saves\Save0'
-    if (!(Test-Path -LiteralPath $saveDir)) {
-        throw "No Saves\Save0 to export: $saveDir"
-    }
-    if (!(Test-Path -LiteralPath $templateDir)) {
-        New-Item -ItemType Directory -Path $templateDir -Force | Out-Null
-    }
-    Copy-FarmScripts -FromDir $saveDir -ToDir $templateDir
-    Write-Host '[ok] Exported Saves\Save0\*.py to templates\Save0. save.json was not copied.'
-    exit 0
-}
-
-$dest = Assert-SaveFolder (Read-SavePath)
-Write-Host "Repo: $RepoRoot"
-Write-Host "Save: $dest"
-
-if ($RepoRoot -ne $dest) {
-    Write-Host '[copy] Copying this repo into the save folder...'
-    Copy-WorkspaceIntoSave -From $RepoRoot -To $dest
+$requestedLang = $Lang
+$resolvedLang = Resolve-Lang $Lang
+if ([string]::IsNullOrWhiteSpace($resolvedLang)) {
+    Import-Messages 'en'
+    Write-Host (T 'lang_fallback' @($requestedLang))
+    $resolvedLang = 'en'
 }
 else {
-    Write-Host '[skip] Already inside the save folder; no copy needed.'
+    Import-Messages $resolvedLang
 }
 
-$workRoot = $dest
-$templateAtDest = Join-Path $workRoot 'templates\Save0'
-if (Test-Path -LiteralPath $templateAtDest) {
-    $templateDir = $templateAtDest
-}
+$templateDir = Join-Path $RepoRoot 'templates\Save0'
 
-if (-not $SkipFarmScripts) {
-    if (Test-Path -LiteralPath $templateDir) {
-        Copy-FarmScripts -FromDir $templateDir -ToDir (Join-Path $workRoot 'Saves\Save0')
-        Write-Host '[ok] Farm scripts installed into Saves\Save0 (save.json left alone).'
-        Write-Host '     New .py files still need a same-name window in the in-game editor.'
+try {
+    if ($ExportFarm) {
+        $exportRoot = if ([string]::IsNullOrWhiteSpace($GameRoot)) { $RepoRoot } else { (Assert-SaveFolder (Normalize-PathInput $GameRoot)) }
+        $saveDir = Join-Path $exportRoot 'Saves\Save0'
+        if (!(Test-Path -LiteralPath $saveDir)) {
+            throw "No Saves\Save0 to export: $saveDir"
+        }
+        if (!(Test-Path -LiteralPath $templateDir)) {
+            New-Item -ItemType Directory -Path $templateDir -Force | Out-Null
+        }
+        Copy-FarmScripts -FromDir $saveDir -ToDir $templateDir
+        Write-Host (T 'export_ok')
+        exit 0
+    }
+
+    Write-Host (T 'title')
+    $dest = Assert-SaveFolder (Read-SavePath)
+    Write-Host "$(T 'repo'): $RepoRoot"
+    Write-Host "$(T 'save'): $dest"
+    Write-Host "$(T 'target'): $dest"
+    Write-Host (T 'copying')
+
+    if ($RepoRoot -ne $dest) {
+        Write-Host (T 'copying_repo')
+        Copy-WorkspaceIntoSave -From $RepoRoot -To $dest
     }
     else {
-        Write-Host '[skip] templates\Save0 is missing; farm scripts not copied.'
+        Write-Host (T 'already_inside')
     }
+
+    $workRoot = $dest
+    $templateAtDest = Join-Path $workRoot 'templates\Save0'
+    if (Test-Path -LiteralPath $templateAtDest) {
+        $templateDir = $templateAtDest
+    }
+
+    if (-not $SkipFarmScripts) {
+        if (Test-Path -LiteralPath $templateDir) {
+            Copy-FarmScripts -FromDir $templateDir -ToDir (Join-Path $workRoot 'Saves\Save0')
+            Write-Host (T 'farm_ok')
+            Write-Host (T 'farm_need_window')
+        }
+        else {
+            Write-Host (T 'farm_skip')
+        }
+    }
+
+    Write-Host (T 'init_links')
+    Install-AgentLinks -Dest $workRoot
+
+    Write-Host ''
+    Write-Host (T 'done')
+    Write-Host (T 'init_done')
+    Write-Host (T 'open_cursor' @($workRoot))
+    Write-Host (T 'next')
+    Write-Host ("  1. " + (T 'next_1'))
+    Write-Host ("  2. " + (T 'next_2'))
+    Write-Host ("  3. " + (T 'next_3'))
+    Write-Host (T 'no_f5')
+    exit 0
 }
-
-Write-Host '[init] Creating Claude / Cursor / Grok skill links...'
-Install-AgentLinks -Dest $workRoot
-
-Write-Host ''
-Write-Host 'Init finished by itself.'
-Write-Host "Open this folder in Cursor: $workRoot"
-Write-Host 'Then:'
-Write-Host '  python .agents\skills\tfwr-control\scripts\tfwr_control.py run-main'
-Write-Host 'Do not press F5. Do not run the farm with main_maze.'
-exit 0
+catch {
+    Write-Host $_.Exception.Message
+    Write-Host (T 'fail')
+    exit 1
+}

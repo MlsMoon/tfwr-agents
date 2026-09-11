@@ -4,7 +4,7 @@ Không gian làm việc Agent cho **The Farmer Was Replaced**.
 
 Một cây skill chuẩn, cài một lệnh, và mẫu script nông trại. Save không đưa lên repo.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Một cây skill chuẩn, cài một lệnh, và mẫu script nông trại. Save
 - `AGENTS.md` — quy tắc Cursor / Claude / Grok khi thư mục này là workspace
 - `.agents/skills/` — **bản skill duy nhất**. Các công cụ thấy qua symlink do setup tạo
 - `templates/Save0/` — script drone (`main`, hướng dương, bí ngô, xương rồng, khủng long, mê cung, …)
-- `setup.bat` / `setup.ps1` — chép skill + script vào thư mục game và tạo link
+- `setup.bat` / `setup.ps1` — trước hết ngôn ngữ, rồi đường dẫn save; chép repo và tự xong init
+- `i18n/` — README dịch và câu setup. Thư mục gốc repo vẫn là tiếng Anh
 
 ## Không có gì
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` **hỏi đường dẫn save**, **tự chép repo vào đó và làm xong init**. Không cần lệnh thứ hai.
+`setup.bat` hỏi **ngôn ngữ** trước (`en`, `zh-CN`, `vi`, …), rồi đường dẫn save, **tự chép repo vào đó và làm xong init**. Không cần lệnh thứ hai.
 
 Đường dẫn mặc định (Enter):
 

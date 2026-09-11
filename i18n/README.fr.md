@@ -4,7 +4,7 @@ Espace de travail Agent pour **The Farmer Was Replaced**.
 
 Une seule arborescence de skills, un installeur en une commande, et des modèles de scripts. Les sauvegardes ne sont pas dans le dépôt.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Une seule arborescence de skills, un installeur en une commande, et des modèles
 - `AGENTS.md` — règles Cursor / Claude / Grok quand ce dossier est le workspace
 - `.agents/skills/` — **la seule copie des skills**. Les outils les voient via les liens créés par setup
 - `templates/Save0/` — scripts de drone (`main`, tournesol, citrouille, cactus, dinosaure, labyrinthe, …)
-- `setup.bat` / `setup.ps1` — copie skills + scripts dans le dossier du jeu et crée les liens
+- `setup.bat` / `setup.ps1` — d’abord la langue, puis le chemin de sauvegarde ; copie et termine l’init
+- `i18n/` — README traduits et textes d’install. La racine du dépôt reste en anglais
 
 ## Hors dépôt
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` **demande le chemin de sauvegarde**, **copie ce dépôt dedans et termine l’init tout seul**. Pas de seconde commande.
+`setup.bat` demande d’abord la **langue** (`en`, `zh-CN`, `fr`, …), puis le chemin de sauvegarde, **copie ce dépôt dedans et termine l’init tout seul**. Pas de seconde commande.
 
 Chemin par défaut (Entrée) :
 

@@ -4,7 +4,7 @@
 
 只维护一份权威 skill、一键安装，以及农场脚本模板。你的存档不会进仓库。
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@
 - `AGENTS.md` — 把游戏用户目录当成工作区时，Cursor / Claude / Grok 要遵守的规则
 - `.agents/skills/` — **唯一的 skill 真源**。Claude / Cursor / Grok 通过安装脚本建的符号链接来发现它
 - `templates/Save0/` — 无人机脚本（`main`、向日葵、南瓜、仙人掌、恐龙、迷宫等）
-- `setup.bat` / `setup.ps1` — 询问存档路径，把本仓库拷进去，并自动做完初始化（skill、农场脚本、链接）
+- `setup.bat` / `setup.ps1` — 先选语言，再问存档路径，把本仓库拷进去并自动做完初始化
+- `i18n/` — 多语言 README 和安装提示。仓库根目录只保留英文
 
 ## 仓库里没有什么
 
@@ -53,13 +54,13 @@ cd tfwr-agents
 setup.bat
 ```
 
-双击或运行 `setup.bat` 后会**提示你输入存档路径**，然后**自动把自己拷进该目录并做完初始化**（skill、农场脚本、Claude / Cursor / Grok 链接）。不用再跑第二步。
+双击或运行 `setup.bat` 后会**先让你输入语言**（`en`、`zh-CN`、`ja` 等），再问存档路径，然后**自动把自己拷进该目录并做完初始化**。不用再跑第二步。
 
-默认路径（直接回车）：
+默认语言是英文（直接回车）。默认路径（再回车一次）：
 
 `%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
 
-窗口里的提示：
+选好语言之后的提示：
 
 - 填的是【存档】目录，不是 `steamapps\common\The Farmer Was Replaced`
 - 如果文件夹不存在，先启动一次游戏
@@ -68,7 +69,7 @@ setup.bat
 不弹窗、直接指定路径：
 
 ```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "C:\Users\你\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -Lang zh-CN -GameRoot "C:\Users\你\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
 ```
 
 成功后，用 Cursor 打开**那个存档目录**。脚本会：

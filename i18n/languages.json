@@ -1,0 +1,16 @@
+{
+  "languages": [
+    { "id": "en", "name": "English", "aliases": ["en", "english", "1"] },
+    { "id": "zh-CN", "name": "简体中文", "aliases": ["zh-CN", "zh", "cn", "zhcn", "chs", "简体", "中文", "2"] },
+    { "id": "zh-TW", "name": "繁體中文", "aliases": ["zh-TW", "tw", "zhtw", "cht", "繁體", "繁体", "3"] },
+    { "id": "ja", "name": "日本語", "aliases": ["ja", "jp", "japanese", "日本語", "4"] },
+    { "id": "ko", "name": "한국어", "aliases": ["ko", "kr", "korean", "한국어", "5"] },
+    { "id": "de", "name": "Deutsch", "aliases": ["de", "german", "deutsch", "6"] },
+    { "id": "fr", "name": "Français", "aliases": ["fr", "french", "francais", "français", "7"] },
+    { "id": "es", "name": "Español", "aliases": ["es", "spanish", "espanol", "español", "8"] },
+    { "id": "pt-BR", "name": "Português", "aliases": ["pt-BR", "pt", "br", "ptbr", "portuguese", "portugues", "9"] },
+    { "id": "ru", "name": "Русский", "aliases": ["ru", "russian", "русский", "10"] },
+    { "id": "vi", "name": "Tiếng Việt", "aliases": ["vi", "vn", "vietnamese", "11"] },
+    { "id": "id", "name": "Bahasa Indonesia", "aliases": ["id", "indonesian", "indonesia", "12"] }
+  ]
+}

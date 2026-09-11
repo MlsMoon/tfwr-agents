@@ -4,7 +4,7 @@ Agent-Arbeitsbereich für **The Farmer Was Replaced**.
 
 Ein kanonischer Skill-Baum, Ein-Klick-Installation und Farm-Skriptvorlagen. Spielstände liegen nicht im Repo.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Ein kanonischer Skill-Baum, Ein-Klick-Installation und Farm-Skriptvorlagen. Spie
 - `AGENTS.md` — Regeln für Cursor / Claude / Grok, wenn dieser Ordner der Workspace ist
 - `.agents/skills/` — **die einzige Skill-Kopie**. Claude / Cursor / Grok finden sie über Symlinks von setup
 - `templates/Save0/` — Drohnen-Skripte (`main`, Sonnenblume, Kürbis, Kaktus, Dinosaurier, Labyrinth, …)
-- `setup.bat` / `setup.ps1` — kopiert Skills und Skripte in den Spielordner und legt Links an
+- `setup.bat` / `setup.ps1` — zuerst Sprache, dann Save-Pfad; kopiert das Repo und schließt Init selbst ab
+- `i18n/` — übersetzte READMEs und Setup-Texte. Die Repo-Wurzel bleibt Englisch
 
 ## Nicht enthalten
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-`setup.bat` **fragt nach dem Save-Pfad**, **kopiert dieses Repo dorthin und schließt die Initialisierung selbst ab**. Kein zweiter Befehl.
+`setup.bat` fragt zuerst nach der **Sprache** (`en`, `zh-CN`, `de`, …), dann nach dem Save-Pfad, **kopiert dieses Repo dorthin und schließt die Initialisierung selbst ab**. Kein zweiter Befehl.
 
 Standard (Enter):
 

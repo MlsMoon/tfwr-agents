@@ -4,7 +4,7 @@
 
 Uma única árvore canônica de skills, instalador em um passo e modelos de scripts. O save não entra no repositório.
 
-**[English](README.md)** ·
+**[English](../README.md)** ·
 **[简体中文](README.zh-CN.md)** ·
 **[繁體中文](README.zh-TW.md)** ·
 **[日本語](README.ja.md)** ·
@@ -22,7 +22,8 @@ Uma única árvore canônica de skills, instalador em um passo e modelos de scri
 - `AGENTS.md` — regras para Cursor / Claude / Grok quando esta pasta é o workspace
 - `.agents/skills/` — **a única cópia das skills**. Os editores as veem pelos links do setup
 - `templates/Save0/` — scripts do drone (`main`, girassol, abóbora, cacto, dinossauro, labirinto, …)
-- `setup.bat` / `setup.ps1` — copia skills e scripts para a pasta do jogo e cria os links
+- `setup.bat` / `setup.ps1` — primeiro o idioma, depois o caminho do save; copia o repo e termina a init
+- `i18n/` — READMEs traduzidos e textos de instalação. A raiz do repo fica em inglês
 
 ## O que não vem
 
@@ -53,7 +54,7 @@ cd tfwr-agents
 setup.bat
 ```
 
-O `setup.bat` **pede o caminho do save**, **copia este repo para lá e termina a init sozinho**. Sem segundo comando.
+O `setup.bat` pede primeiro o **idioma** (`en`, `zh-CN`, `pt-BR`, …), depois o caminho do save, **copia este repo para lá e termina a init sozinho**. Sem segundo comando.
 
 Caminho padrão (Enter):
 
