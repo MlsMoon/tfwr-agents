@@ -37,14 +37,13 @@ function Read-SavePath {
         return $default
     }
     Write-Host ''
-    Write-Host '请输入游戏【存档】目录，不是 Steam 安装目录。'
     Write-Host 'Enter the game SAVE folder, not the Steam install folder.'
     Write-Host ''
-    Write-Host "默认 Default (直接回车 / press Enter):"
+    Write-Host 'Default (press Enter):'
     Write-Host "  $default"
     Write-Host ''
-    Write-Host '提示: 先启动一次游戏才会生成该文件夹。不要填 steamapps\common\...'
-    $typed = Read-Host '存档路径 Save path'
+    Write-Host 'Hint: launch the game once so this folder exists. Do not use steamapps\common\...'
+    $typed = Read-Host 'Save path'
     $typed = Normalize-PathInput $typed
     if ([string]::IsNullOrWhiteSpace($typed)) {
         return $default
@@ -55,10 +54,10 @@ function Read-SavePath {
 function Assert-SaveFolder {
     param([Parameter(Mandatory)][string]$Path)
     if ($Path -match 'steamapps\\common') {
-        throw "这是 Steam 安装目录，不是存档。This is the install folder, not the save folder.`n应该类似: $env:USERPROFILE\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+        throw "This is the Steam install folder, not the save folder.`nExpected something like: $env:USERPROFILE\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
     }
     if (!(Test-Path -LiteralPath $Path -PathType Container)) {
-        throw "找不到目录: $Path`nFolder not found.`n请先启动一次游戏以生成存档文件夹，或检查路径。`nLaunch the game once so the save folder exists."
+        throw "Folder not found: $Path`nLaunch the game once so the save folder exists, or check the path."
     }
     return (Resolve-Path -LiteralPath $Path).Path
 }
@@ -197,9 +196,9 @@ Write-Host '[init] Creating Claude / Cursor / Grok skill links...'
 Install-AgentLinks -Dest $workRoot
 
 Write-Host ''
-Write-Host '初始化已自动完成。Init finished by itself.'
-Write-Host "请用 Cursor 打开: $workRoot"
-Write-Host 'Open that folder in Cursor, then:'
+Write-Host 'Init finished by itself.'
+Write-Host "Open this folder in Cursor: $workRoot"
+Write-Host 'Then:'
 Write-Host '  python .agents\skills\tfwr-control\scripts\tfwr_control.py run-main'
-Write-Host '不要按 F5。不要用 main_maze 跑农场。'
+Write-Host 'Do not press F5. Do not run the farm with main_maze.'
 exit 0
