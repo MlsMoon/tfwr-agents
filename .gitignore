@@ -25,6 +25,12 @@
 **/.vs/
 *.user
 
+# Local junk
+**/__pycache__/
+*.pyc
+/.htybox/
+/Themes/
+
 # OS
 Thumbs.db
 Desktop.ini
