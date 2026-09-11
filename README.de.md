@@ -45,18 +45,27 @@ Standardordner:
 
 ## Initialisieren (einmal)
 
+Beliebig klonen. Muss nicht im Save-Ordner liegen.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-Das Skript:
+`setup.bat` **fragt nach dem Save-Pfad**, **kopiert dieses Repo dorthin und schließt die Initialisierung selbst ab**. Kein zweiter Befehl.
 
-1. findet den Userdata-Ordner (oder `-GameRoot`)
-2. kopiert `AGENTS.md` und `.agents\skills` dorthin (übersprungen, wenn schon dort)
-3. kopiert `templates\Save0\*.py` nach `Saves\Save0` — **schreibt nie `save.json`**
-4. erstellt:
+Standard (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Hinweis: Save-Ordner, nicht Steam-Install. Ordner fehlt? Spiel einmal starten.
+
+Danach den **Save-Ordner** in Cursor öffnen. Das Skript:
+
+1. kopiert `AGENTS.md`, `.agents\skills`, Vorlagen und Setup in den Save-Ordner
+2. kopiert `templates\Save0\*.py` nach `Saves\Save0` — **schreibt nie `save.json`**
+3. erstellt:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ Das Skript:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Eigener Pfad:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Nur Skills, Drohnen-Dateien behalten:

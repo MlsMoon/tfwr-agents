@@ -45,18 +45,27 @@
 
 ## 一鍵初始化
 
+倉庫可以克隆到**任何地方**，不必先放進存檔目錄。
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-腳本會：
+執行 `setup.bat` 後會**請你輸入存檔路徑**，然後**自動把自己拷進該目錄並做完初始化**。不用再跑第二步。
 
-1. 找到遊戲使用者目錄（或使用 `-GameRoot`）
-2. 把 `AGENTS.md` 與 `.agents\skills` 拷過去（若已在該目錄則略過）
-3. 把 `templates\Save0\*.py` 拷進 `Saves\Save0` — **絕不寫入 `save.json`**
-4. 建立：
+預設路徑（直接 Enter）：
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+提示：填的是【存檔】目錄，不是 Steam 安裝目錄；資料夾不存在就先開一次遊戲。
+
+成功後用 Cursor 打開**那個存檔目錄**。腳本會：
+
+1. 把 `AGENTS.md`、`.agents\skills`、範本與 setup 拷進存檔目錄
+2. 把 `templates\Save0\*.py` 拷進 `Saves\Save0` — **絕不寫入 `save.json`**
+3. 建立：
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ setup.bat
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-自訂路徑：
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 只裝 skill、保留你現在的無人機腳本：

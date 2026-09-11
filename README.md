@@ -22,7 +22,7 @@ One canonical skill tree, a one-shot installer, and farm script templates. Your 
 - `AGENTS.md` — rules for Cursor / Claude / Grok when this folder is the workspace
 - `.agents/skills/` — **the only skill copy**. Claude / Cursor / Grok see it through symlinks created by setup
 - `templates/Save0/` — drone scripts (`main`, sunflower, pumpkin, cactus, dinosaur, maze, …)
-- `setup.bat` / `setup.ps1` — copy skills + scripts into the game folder and create the links
+- `setup.bat` / `setup.ps1` — ask for the save path, copy this repo there, then finish init (skills + farm scripts + links)
 
 ## What is not in this repo
 
@@ -45,18 +45,37 @@ Default game folder:
 
 ## Initialize (one shot)
 
+Clone **anywhere** (Downloads is fine). You do not need to clone into the save folder.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-That will:
+`setup.bat` will **ask you to type the save path**, then **copy this repo into that folder and finish init by itself** (skills, farm scripts, Claude / Cursor / Grok links). No second command.
 
-1. Find the game userdata folder (or use `-GameRoot`)
-2. Copy `AGENTS.md` and `.agents\skills` there (skipped if you already cloned inside that folder)
-3. Copy `templates\Save0\*.py` into `Saves\Save0` — **never writes `save.json`**
-4. Create:
+Default path (press Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Hints shown in the bat:
+
+- This is the **save** folder, not `steamapps\common\The Farmer Was Replaced`
+- Launch the game once if that folder does not exist yet
+- You can paste the path from File Explorer's address bar
+
+Non-interactive:
+
+```bat
+powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "C:\Users\YOU\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+```
+
+After it succeeds, open **that save folder** in Cursor. The script:
+
+1. Copies `AGENTS.md`, `.agents\skills`, templates, and setup files into the save folder
+2. Copies `templates\Save0\*.py` into `Saves\Save0` — **never writes `save.json`**
+3. Creates:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +83,6 @@ That will:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Custom path:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Skills only, keep your current drone files:

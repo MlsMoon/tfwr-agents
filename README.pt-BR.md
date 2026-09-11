@@ -45,18 +45,27 @@ Pasta padrão:
 
 ## Inicializar (um passo)
 
+Clone em qualquer lugar. Não precisa ser a pasta do save.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-O script:
+O `setup.bat` **pede o caminho do save**, **copia este repo para lá e termina a init sozinho**. Sem segundo comando.
 
-1. acha a pasta de userdata (ou `-GameRoot`)
-2. copia `AGENTS.md` e `.agents\skills` (pula se você já estiver lá)
-3. copia `templates\Save0\*.py` para `Saves\Save0` — **nunca grava `save.json`**
-4. cria:
+Caminho padrão (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Dica: pasta de **save**, não a instalação Steam. Se não existir, abra o jogo uma vez.
+
+Depois abra **essa pasta de save** no Cursor. O script:
+
+1. copia `AGENTS.md`, `.agents\skills`, modelos e setup para a pasta de save
+2. copia `templates\Save0\*.py` para `Saves\Save0` — **nunca grava `save.json`**
+3. cria:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ O script:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Caminho próprio:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Só skills, manter seus scripts atuais:

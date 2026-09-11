@@ -45,18 +45,27 @@ skill は正本を 1 つだけ持ちます。ワンショット導入と農場�
 
 ## 初期化（ワンショット）
 
+どこにクローンしても構いません。セーブフォルダに置く必要はありません。
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-実行内容：
+`setup.bat` が**セーブパスの入力を求め**、**このリポジトリをそこにコピーして初期化まで自動で終わらせます**。二回目のコマンドは不要です。
 
-1. ゲームのユーザーデータフォルダを探す（または `-GameRoot`）
-2. `AGENTS.md` と `.agents\skills` をコピー（すでにそのフォルダ内ならスキップ）
-3. `templates\Save0\*.py` を `Saves\Save0` へコピー — **`save.json` は書き込まない**
-4. 次のリンクを作成：
+既定パス（Enter だけ）：
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+ヒント：Steam のインストールフォルダではなくセーブフォルダです。無いときは先にゲームを一度起動。
+
+成功したら、そのセーブフォルダを Cursor で開きます。スクリプトは：
+
+1. `AGENTS.md`、`.agents\skills`、テンプレート、setup をセーブフォルダへコピー
+2. `templates\Save0\*.py` を `Saves\Save0` へコピー — **`save.json` は書き込まない**
+3. 次のリンクを作成：
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ setup.bat
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-パス指定：
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 skill だけ入れて、今のドローンファイルは残す：

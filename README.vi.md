@@ -45,18 +45,27 @@ Thư mục mặc định:
 
 ## Khởi tạo (một lần)
 
+Clone ở đâu cũng được. Không cần sẵn trong thư mục save.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-Script sẽ:
+`setup.bat` **hỏi đường dẫn save**, **tự chép repo vào đó và làm xong init**. Không cần lệnh thứ hai.
 
-1. tìm thư mục userdata (hoặc `-GameRoot`)
-2. chép `AGENTS.md` và `.agents\skills` (bỏ qua nếu bạn đã ở đó)
-3. chép `templates\Save0\*.py` vào `Saves\Save0` — **không ghi `save.json`**
-4. tạo:
+Đường dẫn mặc định (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Gợi ý: thư mục **save**, không phải cài Steam. Nếu chưa có, mở game một lần.
+
+Xong thì mở **thư mục save đó** trong Cursor. Script sẽ:
+
+1. chép `AGENTS.md`, `.agents\skills`, mẫu và setup vào thư mục save
+2. chép `templates\Save0\*.py` vào `Saves\Save0` — **không ghi `save.json`**
+3. tạo:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ Script sẽ:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Đường dẫn riêng:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Chỉ cài skill, giữ script drone hiện tại:

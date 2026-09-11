@@ -22,7 +22,7 @@
 - `AGENTS.md` — 把游戏用户目录当成工作区时，Cursor / Claude / Grok 要遵守的规则
 - `.agents/skills/` — **唯一的 skill 真源**。Claude / Cursor / Grok 通过安装脚本建的符号链接来发现它
 - `templates/Save0/` — 无人机脚本（`main`、向日葵、南瓜、仙人掌、恐龙、迷宫等）
-- `setup.bat` / `setup.ps1` — 把 skill 和脚本拷进游戏目录，并创建链接
+- `setup.bat` / `setup.ps1` — 询问存档路径，把本仓库拷进去，并自动做完初始化（skill、农场脚本、链接）
 
 ## 仓库里没有什么
 
@@ -45,18 +45,37 @@
 
 ## 一键初始化
 
+仓库可以克隆到**任何地方**（如下载文件夹），不必先放进存档目录。
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-脚本会：
+双击或运行 `setup.bat` 后会**提示你输入存档路径**，然后**自动把自己拷进该目录并做完初始化**（skill、农场脚本、Claude / Cursor / Grok 链接）。不用再跑第二步。
 
-1. 找到游戏用户目录（或用 `-GameRoot`）
-2. 把 `AGENTS.md` 和 `.agents\skills` 拷过去（如果已经在该目录里则跳过）
-3. 把 `templates\Save0\*.py` 拷进 `Saves\Save0` — **绝不写 `save.json`**
-4. 创建：
+默认路径（直接回车）：
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+窗口里的提示：
+
+- 填的是【存档】目录，不是 `steamapps\common\The Farmer Was Replaced`
+- 如果文件夹不存在，先启动一次游戏
+- 可以从资源管理器地址栏复制路径再粘贴
+
+不弹窗、直接指定路径：
+
+```bat
+powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "C:\Users\你\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+```
+
+成功后，用 Cursor 打开**那个存档目录**。脚本会：
+
+1. 把 `AGENTS.md`、`.agents\skills`、模板和 setup 拷进存档目录
+2. 把 `templates\Save0\*.py` 拷进 `Saves\Save0` — **绝不写 `save.json`**
+3. 创建：
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +83,6 @@ setup.bat
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-自定义路径：
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 只装 skill、保留你现在的无人机脚本：

@@ -45,18 +45,27 @@ Carpeta por defecto:
 
 ## Inicializar (un paso)
 
+Clona donde quieras. No hace falta que sea la carpeta de guardado.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-El script:
+`setup.bat` **pide la ruta de guardado**, **copia este repo ahí y termina la init solo**. No hace falta un segundo comando.
 
-1. encuentra la carpeta de userdata (o `-GameRoot`)
-2. copia `AGENTS.md` y `.agents\skills` (se omite si ya estás ahí)
-3. copia `templates\Save0\*.py` a `Saves\Save0` — **nunca escribe `save.json`**
-4. crea:
+Ruta por defecto (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Pista: carpeta de **guardado**, no la instalación de Steam. Si no existe, abre el juego una vez.
+
+Luego abre **esa carpeta de guardado** en Cursor. El script:
+
+1. copia `AGENTS.md`, `.agents\skills`, plantillas y setup a la carpeta de guardado
+2. copia `templates\Save0\*.py` a `Saves\Save0` — **nunca escribe `save.json`**
+3. crea:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ El script:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Ruta propia:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Solo skills, conservar tus scripts actuales:

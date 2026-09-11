@@ -45,18 +45,27 @@ Folder bawaan:
 
 ## Inisialisasi (sekali)
 
+Clone di mana saja. Tidak perlu sudah di folder save.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-Skrip akan:
+`setup.bat` **akan minta jalur save**, **menyalin repo ke sana, lalu menyelesaikan init sendiri**. Tidak perlu perintah kedua.
 
-1. mencari folder userdata (atau `-GameRoot`)
-2. menyalin `AGENTS.md` dan `.agents\skills` (dilewati jika Anda sudah di situ)
-3. menyalin `templates\Save0\*.py` ke `Saves\Save0` — **tidak menulis `save.json`**
-4. membuat:
+Jalur bawaan (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Petunjuk: folder **save**, bukan instal Steam. Jika belum ada, jalankan game sekali.
+
+Lalu buka **folder save itu** di Cursor. Skrip akan:
+
+1. menyalin `AGENTS.md`, `.agents\skills`, templat, dan setup ke folder save
+2. menyalin `templates\Save0\*.py` ke `Saves\Save0` — **tidak menulis `save.json`**
+3. membuat:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ Skrip akan:
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Jalur kustom:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Hanya skill, pertahankan skrip drone Anda:

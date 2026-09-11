@@ -45,18 +45,27 @@
 
 ## Инициализация (одна команда)
 
+Клонируйте куда угодно. Не обязательно в папку сейва.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-Скрипт:
+`setup.bat` **спросит путь к сейву**, **скопирует репозиторий туда и сам закончит init**. Вторая команда не нужна.
 
-1. находит папку userdata (или `-GameRoot`)
-2. копирует туда `AGENTS.md` и `.agents\skills` (пропускает, если вы уже там)
-3. копирует `templates\Save0\*.py` в `Saves\Save0` — **никогда не пишет `save.json`**
-4. создаёт:
+Путь по умолчанию (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+Подсказка: папка **сейва**, не установки Steam. Если её нет — один раз запустите игру.
+
+Потом откройте **эту папку сейва** в Cursor. Скрипт:
+
+1. копирует `AGENTS.md`, `.agents\skills`, шаблоны и setup в папку сейва
+2. копирует `templates\Save0\*.py` в `Saves\Save0` — **никогда не пишет `save.json`**
+3. создаёт:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ setup.bat
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-Свой путь:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 Только skills, оставить текущие скрипты дрона:

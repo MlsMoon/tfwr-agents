@@ -1,9 +1,10 @@
-# One-shot install: copy canonical skills + farm templates into the TFWR userdata folder.
+# Copy this repo into the game save folder, then finish init (skills links + farm scripts).
 [CmdletBinding()]
 param(
     [string]$GameRoot,
     [switch]$SkipFarmScripts,
-    [switch]$ExportFarm
+    [switch]$ExportFarm,
+    [switch]$NonInteractive
 )
 
 Set-StrictMode -Version Latest
@@ -15,30 +16,51 @@ if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
 }
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 
-function Find-GameRoot {
-    if (-not [string]::IsNullOrWhiteSpace($GameRoot)) {
-        return (Resolve-Path -LiteralPath $GameRoot).Path
+function Normalize-PathInput {
+    param([string]$Value)
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return ''
     }
+    $text = $Value.Trim()
+    $text = $text.Trim('"')
+    $text = $text.Trim("'")
+    $text = $text.TrimEnd('\')
+    return $text
+}
+
+function Read-SavePath {
     $default = Join-Path $env:USERPROFILE 'AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced'
-    $markers = @(
-        (Join-Path $RepoRoot 'Saves\Save0'),
-        (Join-Path $RepoRoot 'AGENTS.md')
-    )
-    if ((Test-Path -LiteralPath $markers[0]) -or (Test-Path -LiteralPath $markers[1])) {
-        if (Test-Path -LiteralPath $default) {
-            $defaultFull = (Resolve-Path -LiteralPath $default).Path
-            if ($defaultFull -eq $RepoRoot) {
-                return $RepoRoot
-            }
-        }
-        if (Test-Path -LiteralPath (Join-Path $RepoRoot 'Saves\Save0')) {
-            return $RepoRoot
-        }
+    if (-not [string]::IsNullOrWhiteSpace($GameRoot)) {
+        return (Normalize-PathInput $GameRoot)
     }
-    if (Test-Path -LiteralPath $default) {
-        return (Resolve-Path -LiteralPath $default).Path
+    if ($NonInteractive) {
+        return $default
     }
-    throw "Cannot find the game folder. Pass -GameRoot `"$default`""
+    Write-Host ''
+    Write-Host '请输入游戏【存档】目录，不是 Steam 安装目录。'
+    Write-Host 'Enter the game SAVE folder, not the Steam install folder.'
+    Write-Host ''
+    Write-Host "默认 Default (直接回车 / press Enter):"
+    Write-Host "  $default"
+    Write-Host ''
+    Write-Host '提示: 先启动一次游戏才会生成该文件夹。不要填 steamapps\common\...'
+    $typed = Read-Host '存档路径 Save path'
+    $typed = Normalize-PathInput $typed
+    if ([string]::IsNullOrWhiteSpace($typed)) {
+        return $default
+    }
+    return $typed
+}
+
+function Assert-SaveFolder {
+    param([Parameter(Mandatory)][string]$Path)
+    if ($Path -match 'steamapps\\common') {
+        throw "这是 Steam 安装目录，不是存档。This is the install folder, not the save folder.`n应该类似: $env:USERPROFILE\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced"
+    }
+    if (!(Test-Path -LiteralPath $Path -PathType Container)) {
+        throw "找不到目录: $Path`nFolder not found.`n请先启动一次游戏以生成存档文件夹，或检查路径。`nLaunch the game once so the save folder exists."
+    }
+    return (Resolve-Path -LiteralPath $Path).Path
 }
 
 function Copy-Tree {
@@ -52,6 +74,9 @@ function Copy-Tree {
     $parent = Split-Path -Parent $To
     if ($parent -and !(Test-Path -LiteralPath $parent)) {
         New-Item -ItemType Directory -Path $parent | Out-Null
+    }
+    if (Test-Path -LiteralPath $To) {
+        Remove-Item -LiteralPath $To -Recurse -Force
     }
     Copy-Item -LiteralPath $From -Destination $To -Recurse -Force
 }
@@ -73,14 +98,61 @@ function Copy-FarmScripts {
     }
 }
 
-$dest = Find-GameRoot
-Write-Host "Repo: $RepoRoot"
-Write-Host "Game: $dest"
+function Copy-WorkspaceIntoSave {
+    param(
+        [Parameter(Mandatory)][string]$From,
+        [Parameter(Mandatory)][string]$To
+    )
+    $names = @(
+        'AGENTS.md',
+        'options.example.txt',
+        'setup.bat',
+        'setup.ps1',
+        '.gitignore',
+        '.gitattributes'
+    )
+    foreach ($name in $names) {
+        $src = Join-Path $From $name
+        if (Test-Path -LiteralPath $src) {
+            Copy-Item -LiteralPath $src -Destination (Join-Path $To $name) -Force
+        }
+    }
+    Get-ChildItem -LiteralPath $From -Filter 'README*.md' -File | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $To $_.Name) -Force
+    }
+    $skillsSrc = Join-Path $From '.agents\skills'
+    if (!(Test-Path -LiteralPath $skillsSrc)) {
+        throw "Missing canonical skills: $skillsSrc"
+    }
+    $agentsDst = Join-Path $To '.agents'
+    if (!(Test-Path -LiteralPath $agentsDst)) {
+        New-Item -ItemType Directory -Path $agentsDst | Out-Null
+    }
+    Copy-Tree -From $skillsSrc -To (Join-Path $To '.agents\skills')
+    $templatesSrc = Join-Path $From 'templates'
+    if (Test-Path -LiteralPath $templatesSrc) {
+        Copy-Tree -From $templatesSrc -To (Join-Path $To 'templates')
+    }
+    Write-Host '[ok] Copied workspace into the save folder. save.json was not touched.'
+}
+
+function Install-AgentLinks {
+    param([Parameter(Mandatory)][string]$Dest)
+    $linkScript = Join-Path $Dest '.agents\skills\tfwr-farm\scripts\ensure-agent-links.ps1'
+    if (!(Test-Path -LiteralPath $linkScript)) {
+        throw "Missing link script: $linkScript"
+    }
+    & $linkScript
+    if ($LASTEXITCODE -ne 0) {
+        throw "ensure-agent-links failed with exit $LASTEXITCODE"
+    }
+}
 
 $templateDir = Join-Path $RepoRoot 'templates\Save0'
-$saveDir = Join-Path $dest 'Saves\Save0'
 
 if ($ExportFarm) {
+    $exportRoot = if ([string]::IsNullOrWhiteSpace($GameRoot)) { $RepoRoot } else { (Assert-SaveFolder (Normalize-PathInput $GameRoot)) }
+    $saveDir = Join-Path $exportRoot 'Saves\Save0'
     if (!(Test-Path -LiteralPath $saveDir)) {
         throw "No Saves\Save0 to export: $saveDir"
     }
@@ -92,29 +164,28 @@ if ($ExportFarm) {
     exit 0
 }
 
-$sameRoot = $RepoRoot -eq $dest
-if (-not $sameRoot) {
-    Copy-Item -LiteralPath (Join-Path $RepoRoot 'AGENTS.md') -Destination (Join-Path $dest 'AGENTS.md') -Force
-    $skillsSrc = Join-Path $RepoRoot '.agents\skills'
-    $skillsDst = Join-Path $dest '.agents\skills'
-    if (!(Test-Path -LiteralPath $skillsSrc)) {
-        throw "Missing canonical skills: $skillsSrc"
-    }
-    if (Test-Path -LiteralPath $skillsDst) {
-        Remove-Item -LiteralPath $skillsDst -Recurse -Force
-    }
-    $agentsDst = Join-Path $dest '.agents'
-    if (!(Test-Path -LiteralPath $agentsDst)) {
-        New-Item -ItemType Directory -Path $agentsDst | Out-Null
-    }
-    Copy-Tree -From $skillsSrc -To $skillsDst
-    Write-Host '[ok] Copied AGENTS.md and .agents\skills'
+$dest = Assert-SaveFolder (Read-SavePath)
+Write-Host "Repo: $RepoRoot"
+Write-Host "Save: $dest"
+
+if ($RepoRoot -ne $dest) {
+    Write-Host '[copy] Copying this repo into the save folder...'
+    Copy-WorkspaceIntoSave -From $RepoRoot -To $dest
+}
+else {
+    Write-Host '[skip] Already inside the save folder; no copy needed.'
+}
+
+$workRoot = $dest
+$templateAtDest = Join-Path $workRoot 'templates\Save0'
+if (Test-Path -LiteralPath $templateAtDest) {
+    $templateDir = $templateAtDest
 }
 
 if (-not $SkipFarmScripts) {
     if (Test-Path -LiteralPath $templateDir) {
-        Copy-FarmScripts -FromDir $templateDir -ToDir $saveDir
-        Write-Host '[ok] Farm scripts copied into Saves\Save0 (save.json left alone).'
+        Copy-FarmScripts -FromDir $templateDir -ToDir (Join-Path $workRoot 'Saves\Save0')
+        Write-Host '[ok] Farm scripts installed into Saves\Save0 (save.json left alone).'
         Write-Host '     New .py files still need a same-name window in the in-game editor.'
     }
     else {
@@ -122,20 +193,13 @@ if (-not $SkipFarmScripts) {
     }
 }
 
-$linkScript = Join-Path $dest '.agents\skills\tfwr-farm\scripts\ensure-agent-links.ps1'
-if (!(Test-Path -LiteralPath $linkScript)) {
-    throw "Missing link script: $linkScript"
-}
-& $linkScript
-if ($LASTEXITCODE -ne 0) {
-    throw "ensure-agent-links failed with exit $LASTEXITCODE"
-}
+Write-Host '[init] Creating Claude / Cursor / Grok skill links...'
+Install-AgentLinks -Dest $workRoot
 
 Write-Host ''
-Write-Host 'Next:'
-Write-Host "  1. Open this folder in Cursor: $dest"
-Write-Host '  2. Enable file watcher in the game (see options.example.txt).'
-Write-Host '  3. Start the farm with:'
-Write-Host '     python .agents\skills\tfwr-control\scripts\tfwr_control.py run-main'
-Write-Host '     Do not press F5. Do not run main_maze for the farm.'
+Write-Host '初始化已自动完成。Init finished by itself.'
+Write-Host "请用 Cursor 打开: $workRoot"
+Write-Host 'Open that folder in Cursor, then:'
+Write-Host '  python .agents\skills\tfwr-control\scripts\tfwr_control.py run-main'
+Write-Host '不要按 F5。不要用 main_maze 跑农场。'
 exit 0

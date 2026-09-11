@@ -45,18 +45,27 @@ skill은 정본 하나만 둡니다. 원샷 설치와 농장 스크립트 템플
 
 ## 초기화 (한 번)
 
+어디든 클론하면 됩니다. 세이브 폴더에 넣을 필요는 없습니다.
+
 ```bat
 git clone https://github.com/MlsMoon/tfwr-agents.git
 cd tfwr-agents
 setup.bat
 ```
 
-동작:
+`setup.bat`이 **세이브 경로를 물어본 뒤**, **이 저장소를 그곳으로 복사하고 초기화까지 자동으로 끝냅니다**. 두 번째 명령은 필요 없습니다.
 
-1. 게임 유저 데이터 폴더를 찾음 (`-GameRoot`로 지정 가능)
-2. `AGENTS.md`와 `.agents\skills`를 복사 (이미 그 폴더 안이면 건너뜀)
-3. `templates\Save0\*.py`를 `Saves\Save0`에 복사 — **`save.json`은 쓰지 않음**
-4. 다음 링크를 만듦:
+기본 경로 (Enter):
+
+`%USERPROFILE%\AppData\LocalLow\TheFarmerWasReplaced\TheFarmerWasReplaced`
+
+힌트: Steam 설치 폴더가 아니라 세이브 폴더입니다. 없으면 게임을 한 번 실행하세요.
+
+성공하면 그 세이브 폴더를 Cursor에서 여세요. 스크립트는:
+
+1. `AGENTS.md`, `.agents\skills`, 템플릿, setup을 세이브 폴더로 복사
+2. `templates\Save0\*.py`를 `Saves\Save0`에 복사 — **`save.json`은 쓰지 않음**
+3. 다음 링크를 만듦:
 
 ```
 .claude\skills  ->  ..\.agents\skills
@@ -64,12 +73,6 @@ setup.bat
 .cursor\skills  ->  ..\.agents\skills
 CLAUDE.md       ->  AGENTS.md
 GROK.md         ->  AGENTS.md
-```
-
-경로 지정:
-
-```bat
-powershell -NoProfile -ExecutionPolicy Bypass -File setup.ps1 -GameRoot "D:\path\TheFarmerWasReplaced"
 ```
 
 skill만 설치하고 현재 드론 파일은 유지:
